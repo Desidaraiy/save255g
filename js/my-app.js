@@ -369,7 +369,7 @@ function downloadingMessages(lastdate){
                 }               
             }else{
                 myApp.hideIndicator();
-                // $$('#btnmore').hide();
+                $$('#btnmore').hide();
                 $$('.second').on('click', function(){
                     myApp.alert('На данный момент у Вас нет сообщений, выбор сообщений не возможен. Попробуйте позже.', 'Сэйв.info');  
                 });
@@ -406,7 +406,7 @@ function downloadingAllMessages(){
                 showMessages(messageBox);  
             }else { 
                 myApp.hideIndicator();
-                // $$('#btnmore').hide();
+                $$('#btnmore').hide();
                 $$('.second').on('click', function(){
                     myApp.alert('На данный момент у Вас нет сообщений, выбор сообщений не возможен. Попробуйте позже.', 'Сэйв.info');  
                 });
@@ -457,32 +457,6 @@ function checkMessagesOne(){
     });
 }
 
-// function wait(ms){
-//    var start = new Date().getTime();
-//    var end = start;
-//    while(end < start + ms) {
-//      end = new Date().getTime();
-//   }
-// }
-
-// function fiftyLoad(a){
-
-//     for(var i = 100; i <= a; i+50){
-//        db.executeSql('SELECT * FROM saveMessagesTable ORDER BY id DESC LIMIT ?, ?', [i, 50], function(result) {
-//             for (var z = 0; z < result.rows.length; z++) {
-//                 var row = result.rows.item(z);
-//                 messageBox.prependMessage({
-//                     text: row.message,
-//                     type: 'received',
-//                     name: row.date,
-//                     avatar: avatar
-//                 }, false);
-//             }
-//             wait(15000);
-//         }); 
-//     }
-// }
-
 function showMessages(messageBox) {
     // alert('1');
     messageBox.clean();
@@ -492,7 +466,7 @@ function showMessages(messageBox) {
             var row = result.rows.item(i);
         }
         if(row.msgcount >= 100){
-           db.executeSql('SELECT * FROM saveMessagesTable ORDER BY id DESC LIMIT 100', [], function(result) {
+           db.executeSql('SELECT * FROM saveMessagesTable ORDER BY id DESC LIMIT 10', [], function(result) {
                 for (var i = 0; i < result.rows.length; i++) {
                     var row = result.rows.item(i);
                     messageBox.prependMessage({
@@ -506,7 +480,7 @@ function showMessages(messageBox) {
                    console.log('успешно!');
                 });
                 // fiftyLoad(row.msgcount);
-                msgs = 100;
+                msgs = 10;
             }); 
        }else{
            db.executeSql('SELECT * FROM saveMessagesTable', [], function(result) {
@@ -523,7 +497,7 @@ function showMessages(messageBox) {
                    console.log('успешно!');
                 });
             });
-            // $$('#btnmore').hide(); 
+            $$('#btnmore').hide(); 
 
        }
         
@@ -569,21 +543,9 @@ function showMessages(messageBox) {
 
     $$('#btnmore').on('click', function(){
 
-        msgs += 100;
+        msgs += 10;
 
-        // db.executeSql('SELECT * FROM saveMessagesTable ORDER BY id DESC LIMIT ?, ?', [msgs, 100], function(result) {
-        //     for (var z = 0; z < result.rows.length; z++) {
-        //         var row = result.rows.item(z);
-        //             messageBox.prependMessage({
-        //                 text: row.message,
-        //                 type: 'received',
-        //                 name: row.date,
-        //                 avatar: avatar
-        //             }, false);
-        //     }
-        // }); 
-
-        db.executeSql('SELECT * FROM saveMessagesTable', [], function(result) {
+        db.executeSql('SELECT * FROM saveMessagesTable ORDER BY id DESC LIMIT ?, ?', [msgs, 10], function(result) {
             for (var z = 0; z < result.rows.length; z++) {
                 var row = result.rows.item(z);
                     messageBox.prependMessage({
