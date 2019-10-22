@@ -1,0 +1,162 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="com.pushmobile.saveinfo"
+        version="2.5.7" 
+        versionCode="205030"
+        xmlns="http://www.w3.org/ns/widgets" 
+        xmlns:gap="http://phonegap.com/ns/1.0"
+        xmlns:cdv="http://cordova.apache.org/ns/1.0">
+
+    <name>Сэйв.info</name>
+
+    <description>
+        Сэйв - Охранное агентство.
+    </description>
+
+    <author email="mail@pushmobile.ru" href="http://pushmobile.ru" />
+
+    <content src="index.html" />
+    <!-- <preference name="cordova-custom-config-autorestore" value="true" /> -->
+    <preference name="iosExtraFilesystems" value="library,library-nosync,documents,documents-nosync,cache,bundle,root" />
+    <preference name="AndroidExtraFilesystems" value="files,files-external,documents,sdcard,cache,cache-external,root" />
+    <preference name="AndroidPersistentFileLocation" value="Compatibility" />
+    <preference name="iosPersistentFileLocation" value="Compatibility" />
+    <preference name="permissions" value="none" />
+    <preference name="orientation" value="portrait" />
+    <preference name="target-device" value="universal" />
+    <preference name="fullscreen" value="false" />
+    <preference name="webviewbounce" value="false" />
+    <preference name="prerendered-icon" value="true" />
+    <preference name="stay-in-webview" value="false" />
+    <preference name="ios-statusbarstyle" value="black-opaque" />
+    <preference name="detect-data-types" value="true" />
+    
+    <preference name="show-splash-screen-spinner" value="false" />
+    <preference name="auto-hide-splash-screen" value="true" />
+    <preference name="disable-cursor" value="false" />
+    <!-- <preference name="android-minSdkVersion" value="16" /> -->
+    <preference name="android-installLocation" value="auto" />
+    <preference name="phonegap-version" value="cli-7.1.0" />
+    <preference name="android-windowSoftInputMode" value="adjustResize" />
+    <preference name="KeyboardDisplayRequiresUserAction" value="true" />
+
+
+    <!-- <preference name="PLAY_SERVICES_VERSION" default="15.0.0"/> -->
+    <!-- <preference name='pgb-builder-version' value='2' /> -->
+
+    <!-- <plugin name="cordova-plugin-spinnerdialog" source="npm" /> -->
+    <!-- <plugin name="cordova-plugin-crosswalk-webview" source="npm" /> -->
+    <plugin name="onesignal-cordova-plugin" spec="2.4.5" source="npm" >
+        <!-- <variable name="PLAY_SERVICES_VERSION" value="15.0.0" /> -->
+    </plugin>
+    <preference name="android-build-tool" value="gradle" />
+    <!-- <plugin name="cordova-plugin-background-mode" source="npm" /> -->
+    <plugin name="cordova-plugin-device" source="npm" />
+    <plugin name="cordova-plugin-file" source="npm" />
+    <plugin name="cordova-plugin-dialogs" source="npm" />
+    <!-- <plugin name="cordova-plugin-file-transfer" source="npm" /> -->
+    <plugin name="cordova-plugin-geolocation" source="npm" />
+    <plugin name="cordova-plugin-globalization" source="npm" />
+    <plugin name="cordova-plugin-inappbrowser" source="npm" />
+    <!-- <plugin name="cordova-plugin-media" source="npm" /> -->
+    <plugin name="cordova-plugin-network-information" source="npm" />
+    <plugin name="cordova-plugin-splashscreen" source="npm" />
+    <plugin name="cordova-plugin-vibration" source="npm" />
+    <plugin name="cordova-plugin-whitelist" source="npm" />
+    <plugin name="cordova-custom-config" source="npm" />
+    <!-- <plugin name="cordova-plugin-keyboard" source="npm" /> -->
+    <!-- <plugin spec="https://github.com/litehelpers/cordova-plugin-sqlite-evplus-ext-common-free#0.1.2" source="git" /> -->
+    <plugin name="cordova-sqlite-evcore-extbuild-free" source="npm" />
+    
+    <!-- <plugin name="cordova-plugin-http" source="npm" /> -->
+
+    <feature name="StatusBar">
+    <param name="ios-package" value="CDVStatusBar" onload="true" />
+    </feature>
+
+    <gap:splash src="splash.png" gap:platform="winphone" />
+    <splash src="splash.png" />
+
+        <edit-config file="Info.plist" parent="UIBackgroundModes" overwrite="true"> 
+           <string>remote-notification</string> 
+        </edit-config>
+
+        <platform name="ios">
+
+<!--             <custom-config-file target="*-Info.plist" parent="UIBackgroundModes" mode="delete"> 
+                <string>audio</string>  
+            </custom-config-file> -->
+
+        <preference name="exit-on-suspend" value="true" />
+       <!-- images are determined by width and height. The following are supported -->
+    <splash src="res/screen/ios/Default~iphone.png" width="320" height="480"/>
+    <splash src="res/screen/ios/Default@2x~iphone.png" width="640" height="960"/>
+    <splash src="res/screen/ios/Default-Portrait~ipad.png" width="768" height="1024"/>
+    <splash src="res/screen/ios/Default-Portrait@2x~ipad.png" width="1536" height="2048"/>
+    <splash src="res/screen/ios/Default-Landscape~ipad.png" width="1024" height="768"/>
+    <splash src="res/screen/ios/Default-Landscape@2x~ipad.png" width="2048" height="1536"/>
+    <splash src="res/screen/ios/Default-568h@2x~iphone.png" width="640" height="1136"/>
+    <splash src="res/screen/ios/Default-667h.png" width="750" height="1334"/>
+    <splash src="res/screen/ios/Default-736h.png" width="1242" height="2208"/>
+    <splash src="res/screen/ios/Default-Landscape-736h.png" width="2208" height="1242"/>
+
+            <!-- iOS 8.0+ -->
+              <!-- iPhone 6 Plus  -->
+              <icon src="res/ios/icon-60@3x.png" width="180" height="180" />
+              <!-- iOS 7.0+ -->
+              <!-- iPhone / iPod Touch  -->
+              <icon src="res/ios/icon-60.png" width="60" height="60" />
+              <icon src="res/ios/icon-60@2x.png" width="120" height="120" />
+              <!-- iPad -->
+              <icon src="res/ios/icon-76.png" width="76" height="76" />
+              <icon src="res/ios/icon-76@2x.png" width="152" height="152" />
+              <!-- iOS 6.1 -->
+              <!-- Spotlight Icon -->
+              <icon src="res/ios/icon-40.png" width="40" height="40" />
+              <icon src="res/ios/icon-40@2x.png" width="80" height="80" />
+              <!-- iPhone / iPod Touch -->
+              <icon src="res/ios/icon.png" width="57" height="57" />
+
+              <!-- iPad -->
+              <icon src="res/ios/icon-72.png" width="72" height="72" />
+              <!-- iPhone Spotlight and Settings Icon -->
+
+    </platform>
+
+    <preference name="SplashScreenDelay" value="5000" />
+    <preference name="FadeSplashScreen" value="false"/>
+    <preference name="FadeSplashScreenDuration" value="3000"/>
+    <preference name="StatusBarOverlaysWebView" value="true" />
+    <preference name="StatusBarBackgroundColor" value="#000000" />
+
+    <access origin="*" />
+    <access origin="http://pushmobile.ru" />
+    <access origin="cdvfile://*" />
+    
+    <allow-intent href="http://*/*" />
+    <allow-intent href="https://*/*" />
+    <allow-intent href="tel:*" />
+    <allow-intent href="sms:*" />
+    <allow-intent href="mailto:*" />
+    <allow-intent href="geo:*" />
+
+    <platform name="android"> 
+        <preference name="exit-on-suspend" value="false" />
+        <preference name="KeepRunning" value="false"/>
+
+    <!-- <plugin name="cordova-plugin-appminimize" source="npm" /> -->
+        <allow-intent href="market:*" />
+
+        <icon density="port-ldpi" src="res/icons/android/icon-36-ldpi.png"/>
+        <icon density="port-mdpi" src="res/icons/android/icon-48-mdpi.png"/>
+        <icon density="port-hdpi" src="res/icons/android/icon-72-hdpi.png"/>
+        <icon density="port-xhdpi" src="res/icons/android/icon-96-xhdpi.png"/>
+        <icon density="port-xxhdpi" src="res/icons/android/icon-144-xxhdpi.png"/>
+        <icon density="port-xxxhdpi" src="res/icons/android/icon-192-xxxhdpi.png"/>
+
+    </platform>
+
+    <platform name="ios">
+        <allow-intent href="itms:*" />
+        <allow-intent href="itms-apps:*" />
+    </platform>
+</widget>
