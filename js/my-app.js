@@ -18,7 +18,7 @@ var db = null;
 var pushid = '';
 var lockTime = null;
 var enterCode = '0';
-
+var objnumber = null;
 
 var enternet, messageBox, avatar, login, pinCode, userData, dblogin, logged, notesBox, noteText, myMessagebar, mySearchbar, opts, numberHolder, notificationReceivedCallback, notificationOpenedCallback, msgs;
 
@@ -465,7 +465,7 @@ function showMessages(messageBox) {
         for (var i = 0; i < result.rows.length; i++) {
             var row = result.rows.item(i);
         }
-        if(row.msgcount >= 100){
+        // if(row.msgcount >= 100){
            db.executeSql('SELECT * FROM saveMessagesTable ORDER BY id DESC LIMIT 10', [], function(result) {
                 for (var i = 0; i < result.rows.length; i++) {
                     var row = result.rows.item(i);
@@ -482,24 +482,24 @@ function showMessages(messageBox) {
                 // fiftyLoad(row.msgcount);
                 msgs = 10;
             }); 
-       }else{
-           db.executeSql('SELECT * FROM saveMessagesTable', [], function(result) {
-                for (var i = 0; i < result.rows.length; i++) {
-                    var row = result.rows.item(i);
-                    messageBox.prependMessage({
-                        text: row.message,
-                        type: 'received',
-                        name: row.date,
-                        avatar: avatar
-                    }, false);
-                }
-                db.executeSql('UPDATE saveMessagesTable SET readed = ? WHERE readed = ?', [1, 0], function(result) {    
-                   console.log('успешно!');
-                });
-            });
-            $$('#btnmore').hide(); 
+       // }else{
+       //     db.executeSql('SELECT * FROM saveMessagesTable', [], function(result) {
+       //          for (var i = 0; i < result.rows.length; i++) {
+       //              var row = result.rows.item(i);
+       //              messageBox.prependMessage({
+       //                  text: row.message,
+       //                  type: 'received',
+       //                  name: row.date,
+       //                  avatar: avatar
+       //              }, false);
+       //          }
+       //          db.executeSql('UPDATE saveMessagesTable SET readed = ? WHERE readed = ?', [1, 0], function(result) {    
+       //             console.log('успешно!');
+       //          });
+       //      });
+       //      $$('#btnmore').hide(); 
 
-       }
+       // }
         
     });
 
@@ -548,14 +548,15 @@ function showMessages(messageBox) {
         db.executeSql('SELECT * FROM saveMessagesTable ORDER BY id DESC LIMIT ?, ?', [msgs, 10], function(result) {
             for (var z = 0; z < result.rows.length; z++) {
                 var row = result.rows.item(z);
-                    messageBox.prependMessage({
+                    messageBox.appendMessage({
                         text: row.message,
                         type: 'received',
                         name: row.date,
                         avatar: avatar
                     }, false);
             }
-        }); 
+
+        });
 
     });
 
@@ -616,25 +617,48 @@ function showMessages(messageBox) {
         if(parseInt(dateonee) < parseInt(datetwoo)){
             messageBox.clean();
             myApp.showIndicator();
-            db.executeSql('SELECT date, message FROM saveMessagesTable WHERE substr(date,1,4)||substr(date,6,2)||substr(date,9,2) BETWEEN ? AND ?', [dateonee, datetwoo], function(result) {
-                for (var i = 0; i < result.rows.length; i++) {
-                    var row = result.rows.item(i);
-                    messageBox.prependMessage({
-                        text: row.message,
-                        type: 'received',
-                        name: row.date,
-                        avatar: avatar
-                    }, false);
-                }
-            }, function(error){
-                alert(error.message);
-            });
 
-            lockTime = false;
+            if(objnumber == null){
+
+                db.executeSql('SELECT date, message FROM saveMessagesTable WHERE substr(date,1,4)||substr(date,6,2)||substr(date,9,2) BETWEEN ? AND ?', [dateonee, datetwoo], function(result) {
+                    for (var i = 0; i < result.rows.length; i++) {
+                        var row = result.rows.item(i);
+                        messageBox.prependMessage({
+                            text: row.message,
+                            type: 'received',
+                            name: row.date,
+                            avatar: avatar
+                        }, false);
+                    }
+                }, function(error){
+                    alert(error.message);
+                });
             myApp.hideIndicator();
+
+            }else{
+
+                db.executeSql('SELECT date, message FROM saveMessagesTable WHERE objnum = ? AND substr(date,1,4)||substr(date,6,2)||substr(date,9,2) BETWEEN ? AND ?', [objnumber, dateonee, datetwoo], function(result) {
+                    for (var i = 0; i < result.rows.length; i++) {
+                        var row = result.rows.item(i);
+                        messageBox.prependMessage({
+                            text: row.message,
+                            type: 'received',
+                            name: row.date,
+                            avatar: avatar
+                        }, false);
+                    }
+                }, function(error){
+                    alert(error.message);
+                });
+                        myApp.hideIndicator();
+            }
+
+            $$('#btnmore').hide();
+
         }else{
             myApp.alert('Выполнить действие не возможно - дата(от) выбрана неправильно. ', 'Сэйв.info');
         }
+            lockTime = false;
 
     }
 
