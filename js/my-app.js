@@ -20,6 +20,8 @@ var lockTime = null;
 var enterCode = '0';
 var objnumber = null;
 
+var msgsj = null;
+
 var enternet, messageBox, avatar, login, pinCode, userData, dblogin, logged, notesBox, noteText, myMessagebar, mySearchbar, opts, numberHolder, notificationReceivedCallback, notificationOpenedCallback, msgs;
 
 var intrro = myApp.onPageInit('home', function (page) {
@@ -479,7 +481,7 @@ function showMessages(messageBox) {
                 db.executeSql('UPDATE saveMessagesTable SET readed = ? WHERE readed = ?', [1, 0], function(result) {    
                    console.log('успешно!');
                 });
-                // fiftyLoad(row.msgcount);
+
                 msgs = 10;
             }); 
        // }else{
@@ -510,23 +512,10 @@ function showMessages(messageBox) {
     $$('select[name="objectselect"]').on('change', function () {
         messageBox.clean();
         objnumber = $$(this).val();
-        if(objnumber == 'all'){
-            db.executeSql('SELECT * FROM saveMessagesTable', [], function(result) {
-                for (var i = 0; i < result.rows.length; i++) {
-                    var row = result.rows.item(i);
-                    messageBox.prependMessage({
-                        text: row.message,
-                        type: 'received',
-                        name: row.date,
-                        avatar: avatar
-                    }, false);
-                }
-            });  
-                       
-        }else if(objnumber == 'al'){
+        if(objnumber == 'al'){
             showMessages(messageBox);
-        }else {
-            db.executeSql('SELECT * FROM saveMessagesTable WHERE objnum = ?', [objnumber], function(result) {
+        }else{
+            db.executeSql('SELECT * FROM saveMessagesTable WHERE objnum = ? ORDER BY id DESC LIMIT 10', [objnumber], function(result) {
                 for (var i = 0; i < result.rows.length; i++) {
                     var row = result.rows.item(i);
                     messageBox.prependMessage({
@@ -536,7 +525,7 @@ function showMessages(messageBox) {
                         avatar: avatar
                     }, false);
                 }
-
+                msgsj = 10;
             });
         }
     });
@@ -544,19 +533,43 @@ function showMessages(messageBox) {
     $$('#btnmore').on('click', function(){
 
         msgs += 10;
+        
+        if(typeof msgsj == null){
 
-        db.executeSql('SELECT * FROM saveMessagesTable ORDER BY id DESC LIMIT ?, ?', [msgs, 10], function(result) {
-            for (var z = 0; z < result.rows.length; z++) {
-                var row = result.rows.item(z);
-                    messageBox.appendMessage({
-                        text: row.message,
-                        type: 'received',
-                        name: row.date,
-                        avatar: avatar
-                    }, false);
-            }
+            db.executeSql('SELECT * FROM saveMessagesTable ORDER BY id DESC LIMIT ?, ?', [msgs, 10], function(result) {
+                for (var z = 0; z < result.rows.length; z++) {
+                    var row = result.rows.item(z);
+                        messageBox.appendMessage({
+                            text: row.message,
+                            type: 'received',
+                            name: row.date,
+                            avatar: avatar
+                        }, false);
+                }
 
-        });
+            }, function(err){
+                $$('#btnmore').hide();
+            }); 
+        }else{
+
+            msgsj += 10;
+            db.executeSql('SELECT * FROM saveMessagesTable WHERE objnum = ? ORDER BY id DESC LIMIT ?, ?', [objnumber, msgs, 10], function(result) {
+                for (var z = 0; z < result.rows.length; z++) {
+                    var row = result.rows.item(z);
+                        messageBox.appendMessage({
+                            text: row.message,
+                            type: 'received',
+                            name: row.date,
+                            avatar: avatar
+                        }, false);
+                }
+
+            }, function(err){
+                $$('#btnmore').hide();
+            });  
+        }
+
+
 
     });
 
@@ -618,7 +631,7 @@ function showMessages(messageBox) {
             messageBox.clean();
             myApp.showIndicator();
 
-            if(objnumber == null){
+            // if(objnumber == null){
 
                 db.executeSql('SELECT date, message FROM saveMessagesTable WHERE substr(date,1,4)||substr(date,6,2)||substr(date,9,2) BETWEEN ? AND ?', [dateonee, datetwoo], function(result) {
                     for (var i = 0; i < result.rows.length; i++) {
@@ -635,23 +648,23 @@ function showMessages(messageBox) {
                 });
             myApp.hideIndicator();
 
-            }else{
+            // }else{
 
-                db.executeSql('SELECT date, message FROM saveMessagesTable WHERE objnum = ? AND substr(date,1,4)||substr(date,6,2)||substr(date,9,2) BETWEEN ? AND ?', [objnumber, dateonee, datetwoo], function(result) {
-                    for (var i = 0; i < result.rows.length; i++) {
-                        var row = result.rows.item(i);
-                        messageBox.prependMessage({
-                            text: row.message,
-                            type: 'received',
-                            name: row.date,
-                            avatar: avatar
-                        }, false);
-                    }
-                }, function(error){
-                    alert(error.message);
-                });
-                        myApp.hideIndicator();
-            }
+            //     db.executeSql('SELECT date, message FROM saveMessagesTable WHERE objnum = ? AND substr(date,1,4)||substr(date,6,2)||substr(date,9,2) BETWEEN ? AND ?', [objnumber, dateonee, datetwoo], function(result) {
+            //         for (var i = 0; i < result.rows.length; i++) {
+            //             var row = result.rows.item(i);
+            //             messageBox.prependMessage({
+            //                 text: row.message,
+            //                 type: 'received',
+            //                 name: row.date,
+            //                 avatar: avatar
+            //             }, false);
+            //         }
+            //     }, function(error){
+            //         alert(error.message);
+            //     });
+            //     myApp.hideIndicator();
+            // }
 
             $$('#btnmore').hide();
 
