@@ -18,7 +18,7 @@ var db = null;
 var pushid = '';
 var lockTime = null;
 var enterCode = '0';
-// var objnumber = null;
+var objnumber = 'al';
 
 var msgsj = 0;
 
@@ -526,14 +526,20 @@ function showMessages(messageBox) {
                         avatar: avatar
                     }, false);
                 }
-                msgsj = 10;
+                
             });
+            msgsj = 10;
         }
     });
 
     $$('#btnmore').click(function(){
 
-        alert('msgs = '+ msgs+ '. msgsj = ' + msgsj + '. objnumber = ' + objnumber);
+
+        objnumber = $$('select[name="objectselect"]').val();
+
+        // alert('msgs = '+ msgs);
+        // alert('. msgsj = ' + msgsj);
+        // alert('. objnumber = ' + objnumber);
 
             if(objnumber == 'al'){
 
@@ -638,57 +644,62 @@ function showMessages(messageBox) {
 
     function showDated(){
 
-        alert(dateonee+ ', ' + datetwoo);
+        objnumber = $$('select[name="objectselect"]').val();
 
-        if(parseInt(dateonee) == parseInt(datetwoo)){
-            alert('даты равны');
-        }
-
-        if(parseInt(dateonee) < parseInt(datetwoo)){
             messageBox.clean();
             myApp.showIndicator();
 
-            // if(objnumber == null){
+            if(parseInt(datetwoo) =< parseInt(dateonee)){
 
-                db.executeSql('SELECT date, message FROM saveMessagesTable WHERE substr(date,1,4)||substr(date,6,2)||substr(date,9,2) BETWEEN ? AND ?', [dateonee, datetwoo], function(result) {
-                    for (var i = 0; i < result.rows.length; i++) {
-                        var row = result.rows.item(i);
-                        messageBox.prependMessage({
-                            text: row.message,
-                            type: 'received',
-                            name: row.date,
-                            avatar: avatar
-                        }, false);
-                    }
-                }, function(error){
-                    alert(error.message);
-                });
-            myApp.hideIndicator();
+                if(objnumber == 'al'){
+                    db.executeSql('SELECT date, message FROM saveMessagesTable WHERE substr(date,1,4)||substr(date,6,2)||substr(date,9,2) BETWEEN ? AND ?', [dateonee, datetwoo], function(result) {
+                        for (var i = 0; i < result.rows.length; i++) {
+                            var row = result.rows.item(i);
+                            messageBox.prependMessage({
+                                text: row.message,
+                                type: 'received',
+                                name: row.date,
+                                avatar: avatar
+                            }, false);
+                        }
+                    });
+                }else if(parseInt(datetwoo) = parseInt(dateonee)){
+                    db.executeSql('SELECT date, message FROM saveMessagesTable WHERE substr(date,1,4)||substr(date,6,2)||substr(date,9,2) = ?', [dateonee], function(result) {
+                        for (var i = 0; i < result.rows.length; i++) {
+                            var row = result.rows.item(i);
+                            messageBox.prependMessage({
+                                text: row.message,
+                                type: 'received',
+                                name: row.date,
+                                avatar: avatar
+                            }, false);
+                        }
+                    });
+                }else{
+                    db.executeSql('SELECT date, message FROM saveMessagesTable WHERE objnum = ? AND substr(date,1,4)||substr(date,6,2)||substr(date,9,2) BETWEEN ? AND ?', [objnumber, dateonee, datetwoo], function(result) {
+                        for (var i = 0; i < result.rows.length; i++) {
+                            var row = result.rows.item(i);
+                            messageBox.prependMessage({
+                                text: row.message,
+                                type: 'received',
+                                name: row.date,
+                                avatar: avatar
+                            }, false);
+                        }
+                    });
+                }
 
-            // }else{
+            }else{
 
-            //     db.executeSql('SELECT date, message FROM saveMessagesTable WHERE objnum = ? AND substr(date,1,4)||substr(date,6,2)||substr(date,9,2) BETWEEN ? AND ?', [objnumber, dateonee, datetwoo], function(result) {
-            //         for (var i = 0; i < result.rows.length; i++) {
-            //             var row = result.rows.item(i);
-            //             messageBox.prependMessage({
-            //                 text: row.message,
-            //                 type: 'received',
-            //                 name: row.date,
-            //                 avatar: avatar
-            //             }, false);
-            //         }
-            //     }, function(error){
-            //         alert(error.message);
-            //     });
-            //     myApp.hideIndicator();
-            // }
+                myApp.alert('Выполнить действие не возможно - дата (от) выбрана неправильно', 'Сэйв.info');
 
-            // $$('#btnmore').hide();
+            }
 
-        }else{
-            myApp.alert('Выполнить действие не возможно - дата(от) выбрана неправильно. ', 'Сэйв.info');
-        }
-            lockTime = false;
+        $$('#btnmore').hide();
+        myApp.hideIndicator();
+
+
+        lockTime = false;
 
     }
 
