@@ -18,9 +18,9 @@ var db = null;
 var pushid = '';
 var lockTime = null;
 var enterCode = '0';
-var objnumber = null;
+// var objnumber = null;
 
-var msgsj = null;
+var msgsj = 0;
 
 var enternet, messageBox, avatar, login, pinCode, userData, dblogin, logged, notesBox, noteText, myMessagebar, mySearchbar, opts, numberHolder, notificationReceivedCallback, notificationOpenedCallback, msgs;
 
@@ -371,7 +371,7 @@ function downloadingMessages(lastdate){
                 }               
             }else{
                 myApp.hideIndicator();
-                $$('#btnmore').hide();
+                // $$('#btnmore').hide();
                 $$('.second').on('click', function(){
                     myApp.alert('На данный момент у Вас нет сообщений, выбор сообщений не возможен. Попробуйте позже.', 'Сэйв.info');  
                 });
@@ -408,7 +408,7 @@ function downloadingAllMessages(){
                 showMessages(messageBox);  
             }else { 
                 myApp.hideIndicator();
-                $$('#btnmore').hide();
+                // $$('#btnmore').hide();
                 $$('.second').on('click', function(){
                     myApp.alert('На данный момент у Вас нет сообщений, выбор сообщений не возможен. Попробуйте позже.', 'Сэйв.info');  
                 });
@@ -514,6 +514,7 @@ function showMessages(messageBox) {
         objnumber = $$(this).val();
         if(objnumber == 'al'){
             showMessages(messageBox);
+            $$('#btnmore').show();
         }else{
             db.executeSql('SELECT * FROM saveMessagesTable WHERE objnum = ? ORDER BY id DESC LIMIT 10', [objnumber], function(result) {
                 for (var i = 0; i < result.rows.length; i++) {
@@ -530,44 +531,54 @@ function showMessages(messageBox) {
         }
     });
 
-    $$('#btnmore').on('click', function(){
+    $$('#btnmore').click(function(){
 
-        msgs += 10;
-        
-        if(typeof msgsj == null){
+        alert('msgs = '+ msgs+ '. msgsj = ' + msgsj + '. objnumber = ' + objnumber);
 
-            db.executeSql('SELECT * FROM saveMessagesTable ORDER BY id DESC LIMIT ?, ?', [msgs, 10], function(result) {
-                for (var z = 0; z < result.rows.length; z++) {
-                    var row = result.rows.item(z);
-                        messageBox.appendMessage({
-                            text: row.message,
-                            type: 'received',
-                            name: row.date,
-                            avatar: avatar
-                        }, false);
-                }
+            if(objnumber == 'al'){
 
-            }, function(err){
-                $$('#btnmore').hide();
-            }); 
-        }else{
+                db.executeSql('SELECT * FROM saveMessagesTable ORDER BY id DESC LIMIT ?, ?', [msgs, 10], function(result) {
+                    for (var z = 0; z < result.rows.length; z++) {
+                        
+                        var row = result.rows.item(z);
+                            messageBox.appendMessage({
+                                text: row.message,
+                                type: 'received',
+                                name: row.date,
+                                avatar: avatar
+                            }, false);
 
-            msgsj += 10;
-            db.executeSql('SELECT * FROM saveMessagesTable WHERE objnum = ? ORDER BY id DESC LIMIT ?, ?', [objnumber, msgs, 10], function(result) {
-                for (var z = 0; z < result.rows.length; z++) {
-                    var row = result.rows.item(z);
-                        messageBox.appendMessage({
-                            text: row.message,
-                            type: 'received',
-                            name: row.date,
-                            avatar: avatar
-                        }, false);
-                }
+                    }
+                    if(parseInt(result.rows.length) < 10){
+                        $$('#btnmore').hide();
+                    }
 
-            }, function(err){
-                $$('#btnmore').hide();
-            });  
-        }
+
+                }); 
+
+                msgs += 10;
+
+            }else{
+
+                
+                db.executeSql('SELECT * FROM saveMessagesTable WHERE objnum = ? ORDER BY id DESC LIMIT ?, ?', [objnumber, msgs, 10], function(result) {
+                    for (var z = 0; z < result.rows.length; z++) {
+                        var row = result.rows.item(z);
+                            messageBox.appendMessage({
+                                text: row.message,
+                                type: 'received',
+                                name: row.date,
+                                avatar: avatar
+                            }, false);
+                    }
+                    if(parseInt(result.rows.length) < 10){
+                        $$('#btnmore').hide();
+                    }
+
+                });  
+
+                msgsj += 10;
+            }
 
 
 
@@ -627,6 +638,12 @@ function showMessages(messageBox) {
 
     function showDated(){
 
+        alert(dateonee+ ', ' + datetwoo);
+
+        if(parseInt(dateonee) == parseInt(datetwoo)){
+            alert('даты равны');
+        }
+
         if(parseInt(dateonee) < parseInt(datetwoo)){
             messageBox.clean();
             myApp.showIndicator();
@@ -666,7 +683,7 @@ function showMessages(messageBox) {
             //     myApp.hideIndicator();
             // }
 
-            $$('#btnmore').hide();
+            // $$('#btnmore').hide();
 
         }else{
             myApp.alert('Выполнить действие не возможно - дата(от) выбрана неправильно. ', 'Сэйв.info');
