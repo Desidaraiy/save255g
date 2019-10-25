@@ -471,7 +471,7 @@ function showMessages(messageBox) {
            db.executeSql('SELECT * FROM saveMessagesTable ORDER BY id DESC LIMIT 10', [], function(result) {
                 for (var i = 0; i < result.rows.length; i++) {
                     var row = result.rows.item(i);
-                    messageBox.prependMessage({
+                    messageBox.appendMessage({
                         text: row.message,
                         type: 'received',
                         name: row.date,
@@ -529,17 +529,14 @@ function showMessages(messageBox) {
                 
             });
             msgsj = 10;
+            $$('#dateone').val('');
+            $$('#datetwo').val('');
         }
     });
 
     $$('#btnmore').click(function(){
 
-
         objnumber = $$('select[name="objectselect"]').val();
-
-        // alert('msgs = '+ msgs);
-        // alert('. msgsj = ' + msgsj);
-        // alert('. objnumber = ' + objnumber);
 
             if(objnumber == 'al'){
 
@@ -566,7 +563,6 @@ function showMessages(messageBox) {
 
             }else{
 
-                
                 db.executeSql('SELECT * FROM saveMessagesTable WHERE objnum = ? ORDER BY id DESC LIMIT ?, ?', [objnumber, msgs, 10], function(result) {
                     for (var z = 0; z < result.rows.length; z++) {
                         var row = result.rows.item(z);
@@ -585,8 +581,6 @@ function showMessages(messageBox) {
 
                 msgsj += 10;
             }
-
-
 
     });
 
@@ -645,62 +639,60 @@ function showMessages(messageBox) {
     function showDated(){
 
         objnumber = $$('select[name="objectselect"]').val();
+        messageBox.clean();
+        myApp.showIndicator();
 
-            messageBox.clean();
-            myApp.showIndicator();
+        if(parseInt(datetwoo) == parseInt(dateonee)){
 
-            if(parseInt(datetwoo) =< parseInt(dateonee)){
+            if(objnumber == 'al'){
 
-                if(objnumber == 'al'){
-                    db.executeSql('SELECT date, message FROM saveMessagesTable WHERE substr(date,1,4)||substr(date,6,2)||substr(date,9,2) BETWEEN ? AND ?', [dateonee, datetwoo], function(result) {
-                        for (var i = 0; i < result.rows.length; i++) {
-                            var row = result.rows.item(i);
-                            messageBox.prependMessage({
-                                text: row.message,
-                                type: 'received',
-                                name: row.date,
-                                avatar: avatar
-                            }, false);
-                        }
-                    });
-                }else if(parseInt(datetwoo) = parseInt(dateonee)){
-                    db.executeSql('SELECT date, message FROM saveMessagesTable WHERE substr(date,1,4)||substr(date,6,2)||substr(date,9,2) = ?', [dateonee], function(result) {
-                        for (var i = 0; i < result.rows.length; i++) {
-                            var row = result.rows.item(i);
-                            messageBox.prependMessage({
-                                text: row.message,
-                                type: 'received',
-                                name: row.date,
-                                avatar: avatar
-                            }, false);
-                        }
-                    });
-                }else{
-                    db.executeSql('SELECT date, message FROM saveMessagesTable WHERE objnum = ? AND substr(date,1,4)||substr(date,6,2)||substr(date,9,2) BETWEEN ? AND ?', [objnumber, dateonee, datetwoo], function(result) {
-                        for (var i = 0; i < result.rows.length; i++) {
-                            var row = result.rows.item(i);
-                            messageBox.prependMessage({
-                                text: row.message,
-                                type: 'received',
-                                name: row.date,
-                                avatar: avatar
-                            }, false);
-                        }
-                    });
-                }
+                db.executeSql('SELECT date, message FROM saveMessagesTable WHERE substr(date,1,4)||substr(date,6,2)||substr(date,9,2) = ?', [dateonee], function(result) {
+                    for (var i = 0; i < result.rows.length; i++) {
+                        var row = result.rows.item(i);
+                        messageBox.prependMessage({
+                            text: row.message,
+                            type: 'received',
+                            name: row.date,
+                            avatar: avatar
+                        }, false);
+                    }
+                });
 
             }else{
 
-                myApp.alert('Выполнить действие не возможно - дата (от) выбрана неправильно', 'Сэйв.info');
-
+                db.executeSql('SELECT date, message FROM saveMessagesTable WHERE objnum = ? AND substr(date,1,4)||substr(date,6,2)||substr(date,9,2) BETWEEN ? AND ?', [objnumber, dateonee, datetwoo], function(result) {
+                    for (var i = 0; i < result.rows.length; i++) {
+                        var row = result.rows.item(i);
+                        messageBox.prependMessage({
+                            text: row.message,
+                            type: 'received',
+                            name: row.date,
+                            avatar: avatar
+                        }, false);
+                    }
+                });
             }
+
+        }else if(parseInt(datetwoo) > parseInt(dateonee)){
+
+            db.executeSql('SELECT date, message FROM saveMessagesTable WHERE substr(date,1,4)||substr(date,6,2)||substr(date,9,2) BETWEEN ? AND ?', [dateonee, datetwoo], function(result) {
+                for (var i = 0; i < result.rows.length; i++) {
+                    var row = result.rows.item(i);
+                    messageBox.prependMessage({
+                        text: row.message,
+                        type: 'received',
+                        name: row.date,
+                        avatar: avatar
+                    }, false);
+                }
+            });
+        }else{
+            myApp.alert('Выполнить действие не возможно - дата (от) выбрана неправильно', 'Сэйв.info');
+        }
 
         $$('#btnmore').hide();
         myApp.hideIndicator();
-
-
         lockTime = false;
-
     }
 
     $$('.sendik').click(function(){
