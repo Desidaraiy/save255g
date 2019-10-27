@@ -773,6 +773,8 @@ function showDated(){
                 if(parseInt(result.rows.length) < 1){
                     $$('p.ifmiss').show();
                     $$('#btnmore').hide();
+                }else if(parseInt(result.rows.length) < 50){
+                    $$('#btnmore').hide();
                 }
             });
 
@@ -790,10 +792,12 @@ function showDated(){
                         avatar: avatar
                     }, false);
                 }
-            if(parseInt(result.rows.length) < 1){
-                $$('p.ifmiss').show();
-                $$('#btnmore').hide();
-            }
+                if(parseInt(result.rows.length) < 1){
+                    $$('p.ifmiss').show();
+                    $$('#btnmore').hide();
+                }else if(parseInt(result.rows.length) < 50){
+                    $$('#btnmore').hide();
+                }
             });
 
            datedTwo = true;
@@ -811,16 +815,19 @@ function showDated(){
                     avatar: avatar
                 }, false);
             }
-            if(parseInt(result.rows.length) < 1){
-                $$('#btnmore').hide();
-                $$('p.ifmiss').show();
-            }
+                if(parseInt(result.rows.length) < 1){
+                    $$('p.ifmiss').show();
+                    $$('#btnmore').hide();
+                }else if(parseInt(result.rows.length) < 50){
+                    $$('#btnmore').hide();
+                }
         });
 
         datedThree = true;
 
     }else{
         myApp.alert('Выполнить действие не возможно - дата (от) выбрана неправильно', 'Сэйв.info');
+        $$('p.ifmiss').show();
     }
     msgs = 50;
     // $$('#btnmore').hide();
