@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget id="com.pushmobile.saveinfo"
-        version="2.5.9" 
+        version="2.6.0" 
         versionCode="205030"
         xmlns="http://www.w3.org/ns/widgets" 
         xmlns:gap="http://phonegap.com/ns/1.0"

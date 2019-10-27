@@ -29,6 +29,7 @@ var msgs = 0;
 var enternet, messageBox, avatar, login, pinCode, userData, dblogin, logged, notesBox, noteText, myMessagebar, mySearchbar, opts, numberHolder, notificationReceivedCallback, notificationOpenedCallback;
 
 var intrro = myApp.onPageInit('home', function (page) {
+
     messageBox = myApp.messages('.messages', {
         autoLayout: false,
         scrollMessages: true
@@ -43,6 +44,257 @@ var intrro = myApp.onPageInit('home', function (page) {
             $$('select[name="objectselect"]').html('');
             checkMessagesOne();
         }); 
+    });
+
+    var myCalendarOne = myApp.calendar({
+        // closeOnSelect:true,
+        input: '#dateone',
+        dateFormat: 'yyyy-mm-dd',
+        monthNames: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август' , 'Сентябрь' , 'Октябрь', 'Ноябрь', 'Декабрь'],
+        dayNamesShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+        onDayClick: function(p, dayContainer, year, month, day){
+        
+            frd = 1;
+
+            if(parseInt(day) < 10){
+                day = '0'+day;
+            }
+            month = parseInt(month)+1;
+            if(parseInt(month) < 10){
+                month = '0'+month;
+            }
+            $$('#dateone').val(year+'-'+month+'-'+day);
+            dateonee = year+''+month+''+day;
+            myCalendarOne.close();
+            if(srd ==  1){
+                showDated();
+            }
+
+        }
+    });   
+    var myCalendarTwo = myApp.calendar({
+        // closeOnSelect:true,
+        input: '#datetwo',
+        dateFormat: 'yyyy-mm-dd',
+        monthNames: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август' , 'Сентябрь' , 'Октябрь', 'Ноябрь', 'Декабрь'],
+        dayNamesShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+        onDayClick: function(p, dayContainer, year, month, day){
+
+            srd = 1;
+            if(parseInt(day) < 10){
+                day = '0'+day;
+            }
+            month = parseInt(month)+1;
+            if(parseInt(month) < 10){
+                month = '0'+month;
+            }
+            $$('#datetwo').val(year+'-'+month+'-'+day);
+            datetwoo = year+''+month+''+day;
+            myCalendarTwo.close();
+            if(frd == 1){
+                showDated();
+            }
+            
+        }
+    }); 
+
+    $$('#btnmore').click(function(){
+
+        objnumber = $$('select[name="objectselect"]').val();
+
+        switch(true){
+            case datedOne: 
+                
+                db.executeSql('SELECT date, message FROM saveMessagesTable WHERE substr(date,1,4)||substr(date,6,2)||substr(date,9,2) BETWEEN ? AND ? ORDER BY id DESC LIMIT ?, ?', [dateonee, datetwoo, msgs, 50], function(result) {
+                    for (var i = 0; i < result.rows.length; i++) {
+                        var row = result.rows.item(i);
+                        messageBox.appendMessage({
+                            text: row.message,
+                            type: 'received',
+                            name: row.date,
+                            avatar: avatar
+                        }, false);
+                    }
+                    if(parseInt(result.rows.length) < 50){
+                        $$('#btnmore').hide();
+                    }
+                });
+
+                break;
+
+            case datedTwo:
+
+                db.executeSql('SELECT date, message FROM saveMessagesTable WHERE objnum = ? AND substr(date,1,4)||substr(date,6,2)||substr(date,9,2) BETWEEN ? AND ? ORDER BY id DESC LIMIT ?, ?', [objnumber, dateonee, datetwoo, msgs, 10], function(result) {
+                    for (var i = 0; i < result.rows.length; i++) {
+                        var row = result.rows.item(i);
+                        messageBox.appendMessage({
+                            text: row.message,
+                            type: 'received',
+                            name: row.date,
+                            avatar: avatar
+                        }, false);
+                    }
+                    if(parseInt(result.rows.length) < 50){
+                        $$('#btnmore').hide();
+                    }
+                });
+
+
+                break;
+
+            case datedThree:
+
+                db.executeSql('SELECT date, message FROM saveMessagesTable WHERE substr(date,1,4)||substr(date,6,2)||substr(date,9,2) = ? ORDER BY id DESC LIMIT ?, ?', [dateonee, msgs, 50], function(result) {
+                    for (var i = 0; i < result.rows.length; i++) {
+                        var row = result.rows.item(i);
+                        messageBox.appendMessage({
+                            text: row.message,
+                            type: 'received',
+                            name: row.date,
+                            avatar: avatar
+                        }, false);
+                    }
+                    if(parseInt(result.rows.length) < 50){
+                        $$('#btnmore').hide();
+                    }
+                });
+
+                break;
+
+            default:
+
+                if(objnumber == 'al'){
+
+                    db.executeSql('SELECT * FROM saveMessagesTable ORDER BY id DESC LIMIT ?, ?', [msgs, 50], function(result) {
+                        for (var i = 0; i < result.rows.length; i++) {
+                            var row = result.rows.item(i);
+                                messageBox.appendMessage({
+                                    text: row.message,
+                                    type: 'received',
+                                    name: row.date,
+                                    avatar: avatar
+                                }, false);
+                        }
+                    if(parseInt(result.rows.length) < 50){
+                        $$('#btnmore').hide();
+                    }
+                    }); 
+
+
+                }else{
+
+                    db.executeSql('SELECT * FROM saveMessagesTable WHERE objnum = ? ORDER BY id DESC LIMIT ?, ?', [objnumber, msgs, 50], function(result) {
+                        for (var i = 0; i < result.rows.length; i++) {
+                            var row = result.rows.item(i);
+                                messageBox.appendMessage({
+                                    text: row.message,
+                                    type: 'received',
+                                    name: row.date,
+                                    avatar: avatar
+                                }, false);
+                        }
+                    if(parseInt(result.rows.length) < 50){
+                        $$('#btnmore').hide();
+                    }
+                    });  
+
+
+                }
+
+                break;
+        }
+
+            msgs += 50;
+
+            // alert('а вот теперь их ' + msgs);
+    });
+
+
+    $$('.sendik').click(function(){
+        dateone = $$('input.second').val();
+        datetwo = $$('input.third').val();
+        objnumber = $$('select#objectsel').val();
+        if(dateone != "" && datetwo != ""){
+           if(objnumber !== 'all'){
+                myApp.prompt('Введите email на который отправить отчет', function(value){
+                    $$.ajax({
+                        type: "GET",
+                        url: "https://baykminer.ru/sos/senddoc1.php",
+                        headers: {
+                            'header1': 'textos'
+                        },
+                        data: { 
+                            'objnumber': objnumber, 
+                            'dateone': dateone+' 00:00:00', 
+                            'datetwo': datetwo+' 23:59:59', 
+                            'value': value
+                        },
+                        crossDomain: true,
+                        cache: false,
+                        error: function(response){
+                            myApp.closeModal();
+                            myApp.alert('Нет подключения к интернету.', 'Сэйв: кнопка SOS');
+                            
+                        },
+                        success: function(response){
+                            myApp.closeModal();
+                            myApp.alert('Отчет будет отправлен на указанную почту в течение 5-ти минут!');
+                        }
+                    });
+                }, function(value){
+                    myApp.closeModal();
+                });
+           }else {
+                myApp.closeModal();
+                myApp.alert('выберите объект');
+                
+           }
+        }else{
+            myApp.closeModal();
+            myApp.alert('Заполните поля даты от и даты до.');
+        }
+
+    });
+
+
+    $$('select[name="objectselect"]').on('change', function () {
+
+        messageBox.clean();
+        $$('p.ifmiss').hide();
+        objnumber = $$(this).val();
+
+        $$('#dateone').val('');
+        $$('#datetwo').val('');
+
+        datedOne = false;
+        datedTwo = false; 
+        datedThree = false;
+        msgs = 0;
+
+        if(objnumber == 'al'){
+
+            showMessages(messageBox);
+        }else{
+            msgs = 50;
+            $$('#btnmore').show();
+
+            db.executeSql('SELECT * FROM saveMessagesTable WHERE objnum = ? ORDER BY id DESC LIMIT 50', [objnumber], function(result) {
+                for (var i = 0; i < result.rows.length; i++) {
+                    var row = result.rows.item(i);
+                    messageBox.appendMessage({
+                        text: row.message,
+                        type: 'received',
+                        name: row.date,
+                        avatar: avatar
+                    }, false);
+                }
+                if(parseInt(result.rows.length) < 50){
+                    $$('#btnmore').hide();
+                }
+            });
+
+        }            
+
     });
 });
 
@@ -469,74 +721,46 @@ function showMessages(messageBox) {
     lockTime = false;
     messageBox.clean();
     $$('#btnmore').show();
-
-    // db.executeSql('SELECT count(*) AS msgcount FROM saveMessagesTable', [], function(result) {
-    //     for (var i = 0; i < result.rows.length; i++) {
-    //         var row = result.rows.item(i);
-    //     }
-        // if(row.msgcount >= 100){
-           db.executeSql('SELECT * FROM saveMessagesTable ORDER BY id DESC LIMIT 10', [], function(result) {
-                for (var i = 0; i < result.rows.length; i++) {
-                    var row = result.rows.item(i);
-                    messageBox.appendMessage({
-                        text: row.message,
-                        type: 'received',
-                        name: row.date,
-                        avatar: avatar
-                    }, false);
-                }
-                db.executeSql('UPDATE saveMessagesTable SET readed = ? WHERE readed = ?', [1, 0], function(result) {    
-                   console.log('успешно!');
-                });
+    $$('p.ifmiss').hide();
 
 
-            }); 
-            msgs = 10;
-       // }else{
-       //     db.executeSql('SELECT * FROM saveMessagesTable', [], function(result) {
-       //          for (var i = 0; i < result.rows.length; i++) {
-       //              var row = result.rows.item(i);
-       //              messageBox.prependMessage({
-       //                  text: row.message,
-       //                  type: 'received',
-       //                  name: row.date,
-       //                  avatar: avatar
-       //              }, false);
-       //          }
-       //          db.executeSql('UPDATE saveMessagesTable SET readed = ? WHERE readed = ?', [1, 0], function(result) {    
-       //             console.log('успешно!');
-       //          });
-       //      });
-       //      $$('#btnmore').hide(); 
+   db.executeSql('SELECT * FROM saveMessagesTable ORDER BY id DESC LIMIT 50', [], function(result) {
+        for (var i = 0; i < result.rows.length; i++) {
+            var row = result.rows.item(i);
+            messageBox.appendMessage({
+                text: row.message,
+                type: 'received',
+                name: row.date,
+                avatar: avatar
+            }, false);
+        }
+        db.executeSql('UPDATE saveMessagesTable SET readed = ? WHERE readed = ?', [1, 0], function(result) {    
+           console.log('успешно!');
+        });
+        if(parseInt(result.rows.length) < 50){
+            $$('#btnmore').hide();
+        }else if(parseInt(result.rows.length) < 1){
+            $$('p.ifmiss').show();
+        }
 
-       // }
-        
-    // });
-
-
+    }); 
+    msgs = 50;
     myApp.hideIndicator();
+}
 
-    $$('select[name="objectselect"]').on('change', function () {
 
-        messageBox.clean();
+function showDated(){
 
-        objnumber = $$(this).val();
+    objnumber = $$('select[name="objectselect"]').val();
+    messageBox.clean();
+    $$('p.ifmiss').hide();
+    myApp.showIndicator();
 
-        $$('#dateone').val('');
-        $$('#datetwo').val('');
-
-        datedOne = false;
-        datedTwo = false; 
-        datedThree = false;
-        msgs = 0;
-
+    if(parseInt(datetwoo) > parseInt(dateonee)){
 
         if(objnumber == 'al'){
 
-            showMessages(messageBox);
-        }else{
-            $$('#btnmore').show();
-            db.executeSql('SELECT * FROM saveMessagesTable WHERE objnum = ? ORDER BY id DESC LIMIT 10', [objnumber], function(result) {
+            db.executeSql('SELECT date, message FROM saveMessagesTable WHERE substr(date,1,4)||substr(date,6,2)||substr(date,9,2) BETWEEN ? AND ? ORDER BY id DESC LIMIT 50', [dateonee, datetwoo], function(result) {
                 for (var i = 0; i < result.rows.length; i++) {
                     var row = result.rows.item(i);
                     messageBox.appendMessage({
@@ -546,222 +770,17 @@ function showMessages(messageBox) {
                         avatar: avatar
                     }, false);
                 }
-                if(parseInt(result.rows.length) < 10){
+                if(parseInt(result.rows.length) < 1){
+                    $$('p.ifmiss').show();
                     $$('#btnmore').hide();
                 }
-                msgs = 10;
             });
 
-        }            
+           datedOne = true;
 
-    });
+        }else{
 
-    $$('#btnmore').click(function(){
-
-        objnumber = $$('select[name="objectselect"]').val();
-
-        switch(true){
-            case datedOne: 
-                
-                db.executeSql('SELECT date, message FROM saveMessagesTable WHERE substr(date,1,4)||substr(date,6,2)||substr(date,9,2) BETWEEN ? AND ? ORDER BY id DESC LIMIT ?, ?', [dateonee, datetwoo, msgs, 10], function(result) {
-                    for (var i = 0; i < result.rows.length; i++) {
-                        var row = result.rows.item(i);
-                        messageBox.appendMessage({
-                            text: row.message,
-                            type: 'received',
-                            name: row.date,
-                            avatar: avatar
-                        }, false);
-                    }
-                    if(parseInt(result.rows.length) < 10){
-                        $$('#btnmore').hide();
-                    }
-                    msgs += 10;
-                });
-
-                break;
-
-            case datedTwo:
-
-                db.executeSql('SELECT date, message FROM saveMessagesTable WHERE objnum = ? AND substr(date,1,4)||substr(date,6,2)||substr(date,9,2) BETWEEN ? AND ? ORDER BY id DESC LIMIT ?, ?', [objnumber, dateonee, datetwoo, msgs, 10], function(result) {
-                    for (var i = 0; i < result.rows.length; i++) {
-                        var row = result.rows.item(i);
-                        messageBox.appendMessage({
-                            text: row.message,
-                            type: 'received',
-                            name: row.date,
-                            avatar: avatar
-                        }, false);
-                    }
-                    if(parseInt(result.rows.length) < 10){
-                        $$('#btnmore').hide();
-                    }
-                    msgs += 10; 
-                });
-
-
-                break;
-
-            case datedThree:
- 
-                db.executeSql('SELECT date, message FROM saveMessagesTable WHERE substr(date,1,4)||substr(date,6,2)||substr(date,9,2) = ? ORDER BY id DESC LIMIT ?, ?', [dateonee, msgs, 10], function(result) {
-                    for (var i = 0; i < result.rows.length; i++) {
-                        var row = result.rows.item(i);
-                        messageBox.appendMessage({
-                            text: row.message,
-                            type: 'received',
-                            name: row.date,
-                            avatar: avatar
-                        }, false);
-                    }
-                    if(parseInt(result.rows.length) < 10){
-                        $$('#btnmore').hide();
-                    }
-                    msgs += 10;
-                });
-
-                break;
-
-            default:
-
-                if(objnumber == 'al'){
-                    db.executeSql('SELECT * FROM saveMessagesTable ORDER BY id DESC LIMIT ?, ?', [msgs, 10], function(result) {
-                        for (var i = 0; i < result.rows.length; i++) {
-                            var row = result.rows.item(i);
-                                messageBox.appendMessage({
-                                    text: row.message,
-                                    type: 'received',
-                                    name: row.date,
-                                    avatar: avatar
-                                }, false);
-                        }
-                    }); 
-
-                    if(parseInt(result.rows.length) < 10){
-                        $$('#btnmore').hide();
-                    }
-                    msgs += 10;
-                    alert(msgs);
-                }else{
-
-                    db.executeSql('SELECT * FROM saveMessagesTable WHERE objnum = ? ORDER BY id DESC LIMIT ?, ?', [objnumber, msgs, 10], function(result) {
-                        for (var i = 0; i < result.rows.length; i++) {
-                            var row = result.rows.item(i);
-                                messageBox.appendMessage({
-                                    text: row.message,
-                                    type: 'received',
-                                    name: row.date,
-                                    avatar: avatar
-                                }, false);
-                        }
-                    });  
-                    if(parseInt(result.rows.length) < 10){
-                        $$('#btnmore').hide();
-                    }
-                        msgs += 10;
-
-                }
-
-                break;
-        }
-    });
-
-    var myCalendarOne = myApp.calendar({
-        // closeOnSelect:true,
-        input: '#dateone',
-        dateFormat: 'yyyy-mm-dd',
-        monthNames: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август' , 'Сентябрь' , 'Октябрь', 'Ноябрь', 'Декабрь'],
-        dayNamesShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
-        onDayClick: function(p, dayContainer, year, month, day){
-        
-            frd = 1;
-
-            if(parseInt(day) < 10){
-                day = '0'+day;
-            }
-            month = parseInt(month)+1;
-            if(parseInt(month) < 10){
-                month = '0'+month;
-            }
-            $$('#dateone').val(year+'-'+month+'-'+day);
-            dateonee = year+''+month+''+day;
-            myCalendarOne.close();
-            if(srd ==  1){
-                showDated();
-            }
-
-        }
-    });   
-    var myCalendarTwo = myApp.calendar({
-        // closeOnSelect:true,
-        input: '#datetwo',
-        dateFormat: 'yyyy-mm-dd',
-        monthNames: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август' , 'Сентябрь' , 'Октябрь', 'Ноябрь', 'Декабрь'],
-        dayNamesShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
-        onDayClick: function(p, dayContainer, year, month, day){
-
-            srd = 1;
-            if(parseInt(day) < 10){
-                day = '0'+day;
-            }
-            month = parseInt(month)+1;
-            if(parseInt(month) < 10){
-                month = '0'+month;
-            }
-            $$('#datetwo').val(year+'-'+month+'-'+day);
-            datetwoo = year+''+month+''+day;
-            myCalendarTwo.close();
-            if(frd == 1){
-                showDated();
-            }
-            
-        }
-    });   
-
-    function showDated(){
-
-        objnumber = $$('select[name="objectselect"]').val();
-        messageBox.clean();
-        myApp.showIndicator();
-
-        if(parseInt(datetwoo) > parseInt(dateonee)){
-
-            if(objnumber == 'al'){
-
-                db.executeSql('SELECT date, message FROM saveMessagesTable WHERE substr(date,1,4)||substr(date,6,2)||substr(date,9,2) BETWEEN ? AND ? ORDER BY id DESC LIMIT 10', [dateonee, datetwoo], function(result) {
-                    for (var i = 0; i < result.rows.length; i++) {
-                        var row = result.rows.item(i);
-                        messageBox.appendMessage({
-                            text: row.message,
-                            type: 'received',
-                            name: row.date,
-                            avatar: avatar
-                        }, false);
-                    }
-                });
-
-               datedOne = true;
-
-            }else{
-
-                db.executeSql('SELECT date, message FROM saveMessagesTable WHERE objnum = ? AND substr(date,1,4)||substr(date,6,2)||substr(date,9,2) BETWEEN ? AND ? ORDER BY id DESC LIMIT 10', [objnumber, dateonee, datetwoo], function(result) {
-                    for (var i = 0; i < result.rows.length; i++) {
-                        var row = result.rows.item(i);
-                        messageBox.appendMessage({
-                            text: row.message,
-                            type: 'received',
-                            name: row.date,
-                            avatar: avatar
-                        }, false);
-                    }
-                });
-
-               datedTwo = true;
-            }
-
-        }else if(parseInt(datetwoo) == parseInt(dateonee)){
-
-            db.executeSql('SELECT date, message FROM saveMessagesTable WHERE substr(date,1,4)||substr(date,6,2)||substr(date,9,2) = ? ORDER BY id DESC LIMIT 10', [dateonee], function(result) {
+            db.executeSql('SELECT date, message FROM saveMessagesTable WHERE objnum = ? AND substr(date,1,4)||substr(date,6,2)||substr(date,9,2) BETWEEN ? AND ? ORDER BY id DESC LIMIT 50', [objnumber, dateonee, datetwoo], function(result) {
                 for (var i = 0; i < result.rows.length; i++) {
                     var row = result.rows.item(i);
                     messageBox.appendMessage({
@@ -771,66 +790,47 @@ function showMessages(messageBox) {
                         avatar: avatar
                     }, false);
                 }
+            if(parseInt(result.rows.length) < 1){
+                $$('p.ifmiss').show();
+                $$('#btnmore').hide();
+            }
             });
 
-            datedThree = true;
-
-        }else{
-            myApp.alert('Выполнить действие не возможно - дата (от) выбрана неправильно', 'Сэйв.info');
+           datedTwo = true;
         }
-        msgs = 10;
-        // $$('#btnmore').hide();
-        myApp.hideIndicator();
-        lockTime = false;
+
+    }else if(parseInt(datetwoo) == parseInt(dateonee)){
+
+        db.executeSql('SELECT date, message FROM saveMessagesTable WHERE substr(date,1,4)||substr(date,6,2)||substr(date,9,2) = ? ORDER BY id DESC LIMIT 50', [dateonee], function(result) {
+            for (var i = 0; i < result.rows.length; i++) {
+                var row = result.rows.item(i);
+                messageBox.appendMessage({
+                    text: row.message,
+                    type: 'received',
+                    name: row.date,
+                    avatar: avatar
+                }, false);
+            }
+            if(parseInt(result.rows.length) < 1){
+                $$('#btnmore').hide();
+                $$('p.ifmiss').show();
+            }
+        });
+
+        datedThree = true;
+
+    }else{
+        myApp.alert('Выполнить действие не возможно - дата (от) выбрана неправильно', 'Сэйв.info');
     }
-
-    $$('.sendik').click(function(){
-        dateone = $$('input.second').val();
-        datetwo = $$('input.third').val();
-        objnumber = $$('select#objectsel').val();
-        if(dateone != "" && datetwo != ""){
-           if(objnumber !== 'all'){
-                myApp.prompt('Введите email на который отправить отчет', function(value){
-                    $$.ajax({
-                        type: "GET",
-                        url: "https://baykminer.ru/sos/senddoc1.php",
-                        headers: {
-                            'header1': 'textos'
-                        },
-                        data: { 
-                            'objnumber': objnumber, 
-                            'dateone': dateone+' 00:00:00', 
-                            'datetwo': datetwo+' 23:59:59', 
-                            'value': value
-                        },
-                        crossDomain: true,
-                        cache: false,
-                        error: function(response){
-                            myApp.closeModal();
-                            myApp.alert('Нет подключения к интернету.', 'Сэйв: кнопка SOS');
-                            
-                        },
-                        success: function(response){
-                            myApp.closeModal();
-                            myApp.alert('Отчет будет отправлен на указанную почту в течение 5-ти минут!');
-                        }
-                    });
-                }, function(value){
-                    myApp.closeModal();
-                });
-           }else {
-                myApp.closeModal();
-                myApp.alert('выберите объект');
-                
-           }
-        }else{
-            myApp.closeModal();
-            myApp.alert('Заполните поля даты от и даты до.');
-        }
-
-    });
-
+    msgs = 50;
+    // $$('#btnmore').hide();
+    myApp.hideIndicator();
+    lockTime = false;
 }
+
+
+
+
 
 function sendpushik(text, name){
     page = myApp.getCurrentView().activePage;
